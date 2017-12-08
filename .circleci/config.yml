@@ -1,0 +1,19 @@
+defaults: &defaults 
+  working_directory: /root/current
+  docker:
+    - image: docker:17.05.0-ce-git
+version: 2
+jobs:
+  build:
+    <<: *defaults
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run: |
+          docker build -t $DOCKER_USER/rpi-nix
+      - deploy:
+          command: |
+            docker login $DOCKER_USER -p $DOCKER_PASS 
+	    docker tag $DOCKER_USER/rpi-nix $DOCKER_USER/rpi-nix:${CIRCLE_SHA1}
+	    docker push $DOCKER_USER/rpi-nix:${CIRCLE_SHA1}
+	    docker push $DOCKER_USER/rpi-nix:latest
