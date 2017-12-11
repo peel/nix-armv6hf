@@ -15,7 +15,8 @@ RUN su -c "git clone https://github.com/nixos/nix.git /home/shell/src &&\
 	./bootstrap.sh &&\
 	./configure" -m shell
 WORKDIR /home/shell/src
-RUN make -j3 doc_generate=no
+RUN chown -R shell /usr/local
+RUN su -c "make -j3 doc_generate=no" -m shell
 RUN su -c "make doc_generate=no install" -m shell
 RUN su -c "git clone https://github.com/nixos/nixpkgs.git" -m shell
 ENTRYPOINT ['su', '-', 'shell']
