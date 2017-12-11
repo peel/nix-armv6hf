@@ -18,6 +18,5 @@ WORKDIR /home/shell/src
 RUN chown -R shell /usr/local
 RUN su -c "make -j3 doc_generate=no" -m shell
 RUN su -c "make doc_generate=no install" -m shell
-RUN su -c "git clone https://github.com/nixos/nixpkgs.git" -m shell
-ENTRYPOINT ['su', '-', 'shell']
+ENTRYPOINT su - shell
 CMD []
