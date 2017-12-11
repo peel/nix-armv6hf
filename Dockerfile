@@ -8,7 +8,14 @@ RUN apt-get update &&\
 ENV SQLITE3=sqlite3
 RUN addgroup --gid 3000 nixbld &&\
     for i in $(seq 1 2); do adduser --quiet --uid $((30000 + i)) --ingroup nixbld --no-create-home --disabled-login nixbld${i}; done &&\
-    adduser --quiet --shell /usr/bin/bash --ingroup sudo --home /home/shell shell &&\
+    adduser --quiet --shell /bin/bash --ingroup sudo --home /home/shell shell &&\
     ln -s /usr/local/etc/profile.d/nix.sh /etc/profile.d
-RUN git clone https://github.com/nixos/nix.git /src && cd /src && git checkout 1.11.9 && ./bootstrap.sh && ./configure && make -j3 doc_generate=no && make doc_generate=no install
-RUN git clone https://github.com/nixos/nixpkgs.git
+RUN su -c "git clone https://github.com/nixos/nix.git /home/shell/src &&\ 
+	cd /home/shell/src &&\
+	./bootstrap.sh &&\
+	./configure &&\
+	make -j3 doc_generate=no &&\
+	make doc_generate=no install" -m shell
+RUN su -c "git clone https://github.com/nixos/nixpkgs.git" -m shell
+ENTRYPOINT ['su', '-', 'shell']
+CMD []
