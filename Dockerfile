@@ -1,6 +1,6 @@
 FROM resin/rpi-raspbian:stretch
 RUN apt-get update &&\
-    apt-get install -y pkg-config openssl bzip2 autoconf flex g++ git\
+    apt-get install -y sudo pkg-config openssl bzip2 autoconf flex g++ git\
 		       make automake m4 patch sqlite3 bison docbook \
 		       libxml2-dev libxslt-dev libssl-dev libbz2-dev \
                        libsqlite3-dev libcurl3-openssl-dev liblzma-dev libseccomp-dev &&\
@@ -13,9 +13,10 @@ RUN addgroup --gid 3000 nixbld &&\
 RUN su -c "git clone https://github.com/nixos/nix.git /home/shell/src &&\ 
 	cd /home/shell/src &&\
 	./bootstrap.sh &&\
-	./configure &&\
-	make -j3 doc_generate=no &&\
-	make doc_generate=no install" -m shell
+	./configure" -m shell
+WORKDIR /home/shell/src
+RUN make -j3 doc_generate=no
+RUN su -c "make doc_generate=no install" -m shell
 RUN su -c "git clone https://github.com/nixos/nixpkgs.git" -m shell
 ENTRYPOINT ['su', '-', 'shell']
 CMD []
