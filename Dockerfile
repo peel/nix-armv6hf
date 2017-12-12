@@ -23,8 +23,8 @@ RUN su -c "sudo nix-store --init &&\
     sudo chown -R shell /nix &&\
     sudo ln -s /usr/bin/stat /bin/stat &&\
     sudo ln -s /usr/bin/id /bin/id &&\
-    bash /usr/local/etc/profile.d/nix.sh &&\
-    nix-channel --add https://nixos.org/channels/nixpkgs-unstable &&\
-    nix-channel --update" -m shell
+    bash /usr/local/etc/profile.d/nix.sh" -m shell
+RUN su shell -c "nix-channel --add http://nixos-arm.dezgeg.me/channel nixpkgs"
+ONBUILD RUN su shell -c "nix-channel --update"
 ENTRYPOINT su - shell
 CMD []
