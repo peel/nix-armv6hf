@@ -9,6 +9,7 @@ jobs:
     steps:
       - checkout
       - setup_remote_docker
+          docker_layer_caching: true
       - run: |
           docker run --rm --privileged multiarch/qemu-user-static:register --reset
           docker build -t $DOCKER_USER/rpi-nix .
