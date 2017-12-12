@@ -19,12 +19,12 @@ WORKDIR /home/shell/src
 RUN chown -R shell /usr/local
 RUN su -c "make -j3 doc_generate=no" -m shell
 RUN su -c "make doc_generate=no install" -m shell
-RUN nix-store --init &&\
-    chown -R shell /nix &&\
-    ln -s /usr/bin/stat /bin/stat &&\
-    ln -s /usr/bin/id /bin/id &&\
+RUN su -c "sudo nix-store --init &&\
+    sudo chown -R shell /nix &&\
+    sudo ln -s /usr/bin/stat /bin/stat &&\
+    sudo ln -s /usr/bin/id /bin/id &&\
     bash /usr/local/etc/profile.d/nix.sh &&\
-    su -c "nix-channel --add https://nixos.org/channels/nixpkgs-unstable" -m shell &&\
-    su -c "nix-channel --update" -m shell
+    nix-channel --add https://nixos.org/channels/nixpkgs-unstable &&\
+    nix-channel --update" -m shell
 ENTRYPOINT su - shell
 CMD []
