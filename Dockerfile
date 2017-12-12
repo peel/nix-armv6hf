@@ -2,7 +2,7 @@ FROM resin/rpi-raspbian:stretch
 RUN apt-get update &&\
     apt-get install -y sudo pkg-config openssl bzip2 autoconf flex g++ git\
 		       make automake m4 patch sqlite3 bison docbook \
-		       libxml2-dev libxslt-dev libssl-dev libbz2-dev \
+		       libsodium-dev libxml2-dev libxslt-dev libssl-dev libbz2-dev \
                        libsqlite3-dev libcurl3-openssl-dev liblzma-dev libseccomp-dev &&\
     rm -rf /var/lib/apt/lists/*
 ENV SQLITE3=sqlite3
@@ -19,5 +19,12 @@ WORKDIR /home/shell/src
 RUN chown -R shell /usr/local
 RUN su -c "make -j3 doc_generate=no" -m shell
 RUN su -c "make doc_generate=no install" -m shell
+RUN nix-store --init &&\
+    chown -R shell /nix &&\
+    ln -s /usr/bin/stat /bin/stat &&\
+    ln -s /usr/bin/id /bin/id &&\
+    bash /usr/local/etc/profile.d/nix.sh &&\
+    su -c "nix-channel --add https://nixos.org/channels/nixpkgs-unstable" -m shell &&\
+    su -c "nix-channel --update" -m shell
 ENTRYPOINT su - shell
 CMD []
